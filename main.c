@@ -28,14 +28,17 @@ void client() {
     hints.ai_family = AF_UNSPEC; // don't care IPv4 or IPv6
     hints.ai_socktype = SOCK_STREAM; // TCP
 
-    // Ip of server in WSL
-    // getaddrinfo() returns one or more addrinfo structures, each of which contains an
-    // Internet address that can be specified in a call to bind(2) or connect(2)
+    /*  
+        getaddrinfo() returns one or more addrinfo structures, each of which contains an
+        Internet address that can be specified in a call to bind(2) or connect(2)
+    
+        The getaddrinfo() function allocates and initializes a linked list of addrinfo structures, one for
+        each network address that matches node and service, subject to any restrictions imposed by hints, and
+        returns a pointer to the start of the list in servinfo. The items in the linked list are linked by the ai_next field.
 
-    //    The getaddrinfo() function allocates and initializes a linked list of addrinfo structures, one for
-    //    each network address that matches node and service, subject to any restrictions imposed by hints, and
-    //    returns a pointer to the start of the list in servinfo. The items in the linked list are linked by the ai_next field.
-    int status = getaddrinfo("172.27.35.246", MYPORT, &hints, &servinfo);
+        Change ipAddr here to your ip address.
+    */ 
+    int status = getaddrinfo("[ipAddr]", MYPORT, &hints, &servinfo);
 
     // If getaddrinfo() fails, it returns a nonzero error code.
     if (status != 0)  {
@@ -101,9 +104,10 @@ void server() {
         exit(EXIT_FAILURE);
     }
 
-    // sockfd is the socket file descriptor returned by socket(). my_addr is a pointer to a struct sockaddr
-    // that contains information about your address, namely, port and IP address. addrlen is the length in bytes
-    // of that address.
+    /* sockfd is the socket file descriptor returned by socket(). my_addr is a pointer to a struct sockaddr
+    that contains information about your address, namely, port and IP address. addrlen is the length in bytes
+    of that address
+    */
     if (bind(socket_fd, res->ai_addr, res->ai_addrlen) == -1) {
         perror("bind()");
         exit(EXIT_FAILURE);
@@ -118,9 +122,11 @@ void server() {
 
     socklen_t addr_size = sizeof(addr);
 
-    //    It extracts the first connection request on the queue of pending connections for the listening socket, sockfd,
-    //    creates a new connected socket, and returns a new file descriptor referring to that socket. The newly created socket
-    //    is not in the listening state. The original socket sockfd is unaffected by this call.
+    /*
+        It extracts the first connection request on the queue of pending connections for the listening socket, sockfd,
+        creates a new connected socket, and returns a new file descriptor referring to that socket. The newly created socket
+        is not in the listening state. The original socket sockfd is unaffected by this call.
+    */
     int new_socket = accept(socket_fd, (struct sockaddr *)&addr, &addr_size);
     if (new_socket == -1) {
         perror("The error on accept call.");
